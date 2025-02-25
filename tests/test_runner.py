@@ -15,7 +15,7 @@ def test_validate_arguments():
 
     args = Args("input.fasta", "nogpu", "monomer", "nvidia", "msa")
     with patch("os.path.isfile", return_value=True):
-        assert validate_arguments(args) == True
+        assert validate_arguments(args)
 
 def test_validate_arguments_invalid_file():
     """Test argument validation with a missing input file."""
