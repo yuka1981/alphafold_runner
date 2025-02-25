@@ -36,7 +36,7 @@ jobs:
 
       - name: Update README.md with CI status and coverage badge
         run: |
-          CI_BADGE="![CI Status](https://github.com/${{ github.repository }}/actions/workflows/python-ci.yml/badge.svg)"
+          CI_BADGE="![CI Status](https://github.com/${{ github.repository }}/actions/workflows/run_test.yml/badge.svg)"
           COVERAGE_BADGE="![Coverage](https://raw.githubusercontent.com/${{ github.repository }}/master/coverage.svg)"
           
           sed -i "/^# .*$/a \\
