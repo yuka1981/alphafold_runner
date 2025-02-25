@@ -34,26 +34,37 @@ jobs:
         run: |
           coverage-badge -o coverage.svg -f
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}  # 確保切換到 PR 對應的分支
+          fetch-depth: 0  # 確保可以 push 回遠端
+      
       - name: Update README.md with CI status and coverage badge
         run: |
-          CI_BADGE="![CI Status](https://github.com/${{ github.repository }}/actions/workflows/run_test.yml/badge.svg)"
-          COVERAGE_BADGE="![Coverage](https://raw.githubusercontent.com/${{ github.repository }}/master/coverage.svg)"
-
+          CI_BADGE="![CI Status](https://github.com/${{ github.repository }}/actions/workflows/python-ci.yml/badge.svg)"
+          COVERAGE_BADGE="![Coverage](https://raw.githubusercontent.com/${{ github.repository }}/main/coverage.svg)"
+      
           # 刪除舊的 CI 狀態與 Coverage Badge（防止重複）
           sed -i '/!\[CI Status\]/d' README.md
           sed -i '/!\[Coverage\]/d' README.md
-
+      
           # 在標題後插入新的 Badge
           sed -i "/^# .*/a \\
           $CI_BADGE\\
-          $COVERAGE_BADGE" README.md          
-
-      - name: Commit changes
+          $COVERAGE_BADGE" README.md
+      
+      - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add coverage.svg README.md
+      
+          # 確保切換回 PR 的分支
+          git checkout ${{ github.head_ref }}
+      
+          git add README.md
           git commit -m "Update CI status and coverage badge" || echo "No changes to commit"
-          git push
+          git push origin ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
