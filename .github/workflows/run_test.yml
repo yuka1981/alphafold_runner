@@ -38,10 +38,15 @@ jobs:
         run: |
           CI_BADGE="![CI Status](https://github.com/${{ github.repository }}/actions/workflows/run_test.yml/badge.svg)"
           COVERAGE_BADGE="![Coverage](https://raw.githubusercontent.com/${{ github.repository }}/master/coverage.svg)"
-          
-          sed -i "/^# .*$/a \\
+
+          # 刪除舊的 CI 狀態與 Coverage Badge（防止重複）
+          sed -i '/!\[CI Status\]/d' README.md
+          sed -i '/!\[Coverage\]/d' README.md
+
+          # 在標題後插入新的 Badge
+          sed -i "/^# .*/a \\
           $CI_BADGE\\
-          $COVERAGE_BADGE" README.md
+          $COVERAGE_BADGE" README.md          
 
       - name: Commit changes
         run: |
