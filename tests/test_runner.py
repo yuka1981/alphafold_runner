@@ -6,64 +6,64 @@ from src.runner import validate_arguments
 @pytest.fixture
 def test_validate_arguments():
     class Args:
-        def __init__(self, input_fasta, preset, mode, platform, msa):
-            self.input_fasta = input_fasta
+        def __init__(self, input_fasta_dir, preset, mode, platform, msa):
+            self.input_fasta_dir = input_fasta_dir
             self.mode = mode
             self.preset = preset
             self.platform = platform
             self.msa = msa
 
     args = Args("input.fasta", "nogpu", "monomer", "nvidia", "msa")
-    with patch("os.path.isfile", return_value=True):
+    with patch("os.path.isdir", return_value=True):
         assert validate_arguments(args)
 
-def test_validate_arguments_invalid_file():
-    """Test argument validation with a missing input file."""
+def test_validate_arguments_invalid_fasta_directory():
+    """Test argument validation with a missing mas directory."""
     class Args:
-        input_fasta = "nonexistent.fasta"
+        input_fasta_dir = "nonexistent_directory"
         preset = "monomer"
         mode = "nogpu"
         platform = "nvidia"
         msa = "msa"
     
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(NotADirectoryError, match="Input fasta directory"):
         validate_arguments(Args())
 
 def test_validate_arguments_invalid_preset():
     """Test argument validation with an invalid preset."""
     class Args:
-        input_fasta = "input.fasta"
+        input_fasta_dir = "input_fasta_dir"
         preset = "invalid"
         mode = "nogpu"
         platform = "nvidia"
         msa = "msa"
     
-    with patch("os.path.isfile", return_value=True):
+    with patch("os.path.isdir", return_value=True):
         with pytest.raises(ValueError, match="Invalid preset"):
             validate_arguments(Args())
 
 def test_validate_arguments_invalid_platform():
     """Test argument validation with an invalid platform."""
     class Args:
-        input_fasta = "input.fasta"
+        input_fasta_dir = "input_fasta_dir"
         preset = "monomer"
         mode = "nogpu"
         platform = "invalid"
         msa = "msa"
     
-    with patch("os.path.isfile", return_value=True):
+    with patch("os.path.isdir", return_value=True):
         with pytest.raises(ValueError, match="Invalid platform"):
             validate_arguments(Args())
 
 def test_validate_arguments_invalid_mode():
     """Test argument validation with an invalid mode."""
     class Args:
-        input_fasta = "input.fasta"
+        input_fasta_dir = "input_fasta_dir"
         preset = "monomer"
         mode = "invalid"
         platform = "nvidia"
         msa = "msa"
     
-    with patch("os.path.isfile", return_value=True):
+    with patch("os.path.isdir", return_value=True):
         with pytest.raises(ValueError, match="Invalid mode"):
             validate_arguments(Args())
